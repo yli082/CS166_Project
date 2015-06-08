@@ -608,7 +608,7 @@ System.out.println("---------");
             }
        break;
        case 6:
-System.out.println("Update profile");
+System.out.println("EDucational details");
                 System.out.println("---------");
                 System.out.println("1. View educational details");
                 System.out.println("2. Add educational details");
@@ -876,6 +876,7 @@ System.out.println(".........................");
        String message = in.readLine();
         String meow = String.format("INSERT INTO MESSAGE(msgId,senderId,receiverId,contents,sendTime,deletestatus,status) VALUES ('%s','%s','%s','%s','%s','%s','%s')",coont.size(),user,name1,message,ourJavaTimeStampObject,0,"Delivered");
 //if deletestatus is 1, sender deletes it, if 2, receiver deletes, if 3 both delete.
+//probably dont need? idk
 esql.executeUpdate(meow);
 
            System.out.println("Message sent");
