@@ -9,6 +9,7 @@
  * Target DBMS: 'Postgres'
  *
  */
+import java.util.Calendar;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -274,14 +275,16 @@ public class ProfNetwork {
                 System.out.println("3. Write a new message");
                 System.out.println("4. Send Friend Request");
                 System.out.println("5. Search for a person");
+                System.out.println("6. View/delete sent messages");
                 System.out.println(".........................");
                 System.out.println("9. Log out");
                 switch (readChoice()){
                    case 1: FriendList(esql,authorisedUser); break;
                    case 2: UpdateProfile(esql,authorisedUser); break;
-                   case 3: NewMessage(esql); break;
+                   case 3: NewMessage(esql,authorisedUser); break;
                    case 4: SendRequest(esql); break;
                    case 5: Searchperson(esql,authorisedUser); break;
+                   case 6: Viewsent(esql,authorisedUser); break;
                    case 9: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
                 }
@@ -339,10 +342,25 @@ public class ProfNetwork {
       try{
          System.out.print("\tEnter user login: ");
          String login = in.readLine();
+         while(login.length()==0)
+         {
+             System.out.print("User name required: ");
+             login = in.readLine();
+         }
          System.out.print("\tEnter user password: ");
          String password = in.readLine();
+         while(password.length()==0)
+         {
+             System.out.print("Password required: ");
+             password = in.readLine();
+         }
          System.out.print("\tEnter user email: ");
          String email = in.readLine();
+         while(email.length()==0)
+         {
+             System.out.print("Email required: ");
+             email = in.readLine();
+         }
          System.out.print("\tEnter name: ");
          String name = in.readLine();
 
@@ -386,19 +404,6 @@ public static boolean isDateValid(String date)
 }
    public static int FriendList(ProfNetwork esql,String user)
    {
-       //executeQueryAndPrintResult
-       try{
-
-System.out.println("---------");
-       String query = String.format("SELECT userid FROM USR WHERE userId = '%s'",user);
-       int yoyo = esql.executeQueryAndPrintResult(query);
-       System.out.println("yoyo activated");
-
-System.out.println(".........................");
-       }
-       catch(Exception e){
-           System.err.println (e.getMessage ());
-       }
        return -1;
    }
 
@@ -409,25 +414,45 @@ System.out.println(".........................");
 
        List<List<String>> yoyo = esql.executeQueryAndReturnResult(query);
 
-  System.out.println("Update profile");
+
+        System.out.println("Current profile");
+        System.out.println("---------");
+        System.out.println("Username: " + yoyo.get(0).get(0));
+        System.out.println("Email: " + yoyo.get(0).get(2));
+        System.out.println("Name: " + yoyo.get(0).get(3));
+        System.out.println("Birthday: " + yoyo.get(0).get(4));
+
+
+
+      System.out.println("---------");
+
+
+  System.out.println("Menu");
                 System.out.println("---------");
                 System.out.println("1. Change password");
-                System.out.println("2. Update work experience");
-                System.out.println("3. Update Educational details");
+                System.out.println("2. Change Email");
+                System.out.println("3. Change name");
+                System.out.println("4. Change birthday");
+                System.out.println("5. View/Update work experience");
+                System.out.println("6. View/Update Educational details");
+                System.out.println("9. Go back");
+
+
 System.out.println(".........................");
-System.out.println("Press anything else to return to the main menu\n");
-                System.out.print("Please make your choice: ");
-                String yes = in.readLine();
-            int foo = Integer.parseInt(yes);
-       if(foo == 1)
-       {
+//System.out.println("Press anything else to return to the main menu\n");
+               // System.out.print("Please make your choice: ");
+                //String yes = in.readLine();
+            //int foo = Integer.parseInt(yes);
+            switch(readChoice()){
+
+       case 1:
            System.out.print("Please enter your current password: ");
            String  checker = in.readLine();
            if((checker).equals(yoyo.get(0).get(1)))
            {
                System.out.print("Password verified, please enter your new password: ");
                String newpw = in.readLine();
-               String qq = String.format("UPDATE USR SET password = '%s' WHERE userid = '%',password = '%s'",newpw,user,checker);
+               String qq = String.format("UPDATE USR SET password = '%s' WHERE userid = '%s',password = '%s'",newpw,user,checker);
                esql.executeUpdate(qq);
                //update pw
            }
@@ -437,29 +462,66 @@ System.out.println("Press anything else to return to the main menu\n");
                 //kill them
            }
 
-       }
-       else if(foo == 2)
-       {
-System.out.println("Update profile");
+       break;
+       case 2:
+            System.out.print("Enter a new email: ");
+            String ems = in.readLine();
+            String oreos = String.format("UPDATE USR SET email = '%s', WHERE userid = '%s'",ems, user);
+            esql.executeUpdate(oreos);
+       break;
+       case 3:
+            System.out.print("Enter a new name: ");
+            String emss = in.readLine();
+            String oreoss = String.format("UPDATE USR SET name = '%s', WHERE userid = '%s'",emss, user);
+            esql.executeUpdate(oreoss);
+       break;
+       case 4:
+            System.out.print("Enter a new birthday (dd/mm/yyyy): ");
+            String emsc = in.readLine();
+            while(!isDateValid(emsc))
+                 {
+                     System.out.print("Please enter a valid date (dd/mm/yyyy): ");
+                     emsc = in.readLine();
+                 }
+            String oreosc = String.format("UPDATE USR SET dateofbirth = '%s', WHERE userid = '%s'",emsc, user);
+            esql.executeUpdate(oreosc);
+       break;
+
+       case 5:
+
+System.out.println("Work Experience");
                 System.out.println("---------");
-                System.out.println("1. Add work experience");
-                System.out.println("2. Update previous work experience");
+                System.out.println("1. View work experience");
+                System.out.println("2. Add work experience");
+                System.out.println("3. Update previous work experience");
 System.out.println(".........................");
-System.out.println("Press anything else to return to the main menu\n");
-                System.out.print("Please make your choice: ");
-                String yaa = in.readLine();
-                int yaa1 = Integer.parseInt(yaa);
+//System.out.println("Press anything else to return to the main menu\n");
             String query2 = String.format("SELECT * FROM WORK_EXPR WHERE userid = '%s'",user);
             int testtest = esql.executeQuery(query2);
             List<List<String>> yoyo2 = esql.executeQueryAndReturnResult(query2);
+            switch(readChoice()){
+                case 1:
+                    for(int j = 0; j < yoyo2.size();++j)
+                    {
+System.out.println("---------");
+                System.out.println("Company: " + yoyo2.get(j).get(1));
 
-            if(yaa1 == 1)
-            {
-//String query = String.format("INSERT INTO USR (userId, password, email, name) VALUES ('%s','%s','%s','%s')", login, password, email,name);
+                System.out.println("Role: " + yoyo2.get(j).get(2));
+
+                System.out.println("Location: " + yoyo2.get(j).get(3));
+
+                System.out.println("Startdate: " + yoyo2.get(j).get(4));
+
+                System.out.println("Enddate: " + yoyo2.get(j).get(5));
+System.out.println("---------");
+
+                    }
+                break;
+            case 2:
                  System.out.print("Please enter your company name: ");
                  String company = in.readLine();
                  company.trim();
-                  System.out.print("Please enter your roll ");
+                  System.out.print("Please enter your role: ");
                  String role = in.readLine();
                  role.trim();
                  System.out.print("Please enter your companies location: ");
@@ -483,12 +545,13 @@ System.out.println("Press anything else to return to the main menu\n");
                  esql.executeUpdate(query3);
 
                 //add work exp
-            }
-            else
-            {
+            break;
+            case 3:
+
                 int i = 0;
                 while(i < yoyo2.size())
                 {
+System.out.println("---------");
                 System.out.println("Current company: " + yoyo2.get(i).get(1));
 
                 System.out.println("Current role: " + yoyo2.get(i).get(2));
@@ -498,6 +561,7 @@ System.out.println("Press anything else to return to the main menu\n");
                 System.out.println("Current startdate: " + yoyo2.get(i).get(4));
 
                 System.out.println("Current enddate: " + yoyo2.get(i).get(5));
+System.out.println("---------");
                 System.out.print("Update? y/n: ");
                 String z = in.readLine();
                 while(true)
@@ -510,45 +574,164 @@ System.out.println("Press anything else to return to the main menu\n");
                 if((z).equals("y"))
                 {
                  System.out.print("Please enter your company name: ");
-                 String company = in.readLine();
-                 company.trim();
-                  System.out.print("Please enter your roll ");
-                 String role = in.readLine();
-                 role.trim();
+                 String company1 = in.readLine();
+                  System.out.print("Please enter your role: ");
+                 String role1 = in.readLine();
                  System.out.print("Please enter your companies location: ");
-                 String location = in.readLine();
-                 location.trim();
-                 System.out.print("Please enter your start date: ");
-                 String startdate = in.readLine();
-                 while(!isDateValid(startdate))
+                 String location1 = in.readLine();
+                 System.out.print("Please enter your start date (dd/mm/yyyy): ");
+                 String startdate1 = in.readLine();
+                 while(!isDateValid(startdate1))
                  {
-                     System.out.print("Please enter a valid date: ");
-                     startdate = in.readLine();
+                     System.out.print("Please enter a valid date (dd/mm/yyyy): ");
+                     startdate1 = in.readLine();
                  }
-                 System.out.print("Please enter your end date: ");
-                 String enddate = in.readLine();
-                 while(!isDateValid(enddate))
+                 System.out.print("Please enter your end date (dd/mm/yyyy): ");
+                 String enddate1 = in.readLine();
+                 while(!isDateValid(enddate1))
                  {
-                     System.out.print("Please enter a valid date: ");
-                     enddate= in.readLine();
+                     System.out.print("Please enter a valid date (dd/mm/yyyy): ");
+                     enddate1= in.readLine();
                  }
 
                 //String qq = String.format("UPDATE USR SET password = '%s' WHERE userid = '%',password = '%s'",newpw,user,checker);
 
-                    String bb = String.format("UPDATE WORK_EXPR SET company = '%s', role ='%s', location = '%s', startdate = '%s', enddate = '%s' WHERE userid = '%s' AND company = '%s' AND role = '%s' AND location = '%s'AND startdate = '%s'AND enddate = '%s'",company,role,location,startdate,enddate,yoyo2.get(i).get(0),yoyo2.get(i).get(1),yoyo2.get(i).get(2),yoyo2.get(i).get(3),yoyo2.get(i).get(4),yoyo2.get(i).get(5));
+                    String bb = String.format("UPDATE WORK_EXPR SET company = '%s', role ='%s', location = '%s', startdate = '%s', enddate = '%s' WHERE userid = '%s' AND company = '%s' AND role = '%s' AND location = '%s'AND startdate = '%s'AND enddate = '%s'",company1,role1,location1,startdate1,enddate1,yoyo2.get(i).get(0),yoyo2.get(i).get(1),yoyo2.get(i).get(2),yoyo2.get(i).get(3),yoyo2.get(i).get(4),yoyo2.get(i).get(5));
 
-                System.out.println(bb);
                 esql.executeUpdate(bb);
                 }
                 ++i;
                 }
                 //update work exp
+                break;
+                default : System.out.println ("Unrecognized choice!"); break;
             }
-       }
-       else if(foo == 3)
-       {
+       break;
+       case 6:
+System.out.println("Update profile");
+                System.out.println("---------");
+                System.out.println("1. View educational details");
+                System.out.println("2. Add educational details");
+                System.out.println("3. Update educational details");
+System.out.println(".........................");
+//System.out.println("Press anything else to return to the main menu\n");
+            String query12 = String.format("SELECT * FROM EDUCATIONAL_DETAILS WHERE userid = '%s'",user);
+            List<List<String>> yoyo12 = esql.executeQueryAndReturnResult(query12);
+            switch(readChoice()){
+                case 1:
+                for(int i = 0; i < yoyo12.size();++i)
+                {
+                System.out.println("---------");
+                System.out.println("Institution name: " + yoyo12.get(i).get(1));
 
+                System.out.println("Major: " + yoyo12.get(i).get(2));
+
+                System.out.println("Degree: " + yoyo12.get(i).get(3));
+
+                System.out.println("Startdate: " + yoyo12.get(i).get(4));
+
+                System.out.println("Enddate: " + yoyo12.get(i).get(5));
+System.out.println("---------");
+
+                }
+                break;
+            case 2:
+                 System.out.print("Please enter your institution name: ");
+                 String company21 = in.readLine();
+                 company21.trim();
+                  System.out.print("Please enter your major: ");
+                 String role21 = in.readLine();
+                 role21.trim();
+                 System.out.print("Please enter your degree: ");
+                 String location21 = in.readLine();
+                 location21.trim();
+                 System.out.print("Please enter your start date (dd/mm/yyyy): ");
+                 String startdate21 = in.readLine();
+                 while(!isDateValid(startdate21))
+                 {
+                     System.out.print("Please enter a valid date (dd/mm/yyyy): ");
+                     startdate21 = in.readLine();
+                 }
+                 System.out.print("Please enter your end date (dd/mm/yyyy): ");
+                 String enddate21 = in.readLine();
+                 while(!isDateValid(enddate21))
+                 {
+                     System.out.print("Please enter a valid date (dd/mm/yyyy): ");
+                     enddate21= in.readLine();
+                 }
+                 String query13 = String.format("INSERT INTO EDUCATIONAL_DETAILS(userId,instituitionName,major,degree,startdate,enddate) VALUES ('%s','%s','%s','%s','%s','%s')",user,company21,role21,location21,startdate21,enddate21);
+                 esql.executeUpdate(query13);
+
+                //add work exp
+            break;
+            case 3:
+
+                int i = 0;
+                while(i < yoyo12.size())
+                {
+System.out.println("---------");
+                System.out.println("Current institution name: " + yoyo12.get(i).get(1));
+
+                System.out.println("Current major: " + yoyo12.get(i).get(2));
+
+                System.out.println("Current degree: " + yoyo12.get(i).get(3));
+
+                System.out.println("Current startdate: " + yoyo12.get(i).get(4));
+
+                System.out.println("Current enddate: " + yoyo12.get(i).get(5));
+System.out.println("---------");
+                System.out.print("Update? y/n: ");
+                String z = in.readLine();
+                while(true)
+                {
+                    if((z).equals("y") || (z).equals("n"))
+                        break;
+                    System.out.print("Enter y or n: ");
+                    z = in.readLine();
+                }
+                if((z).equals("y"))
+                {
+                 System.out.print("Please enter your institution name: ");
+                 String company13 = in.readLine();
+                  System.out.print("Please enter your major: ");
+                 String role13 = in.readLine();
+                 System.out.print("Please enter your degree: ");
+                 String location13 = in.readLine();
+                 System.out.print("Please enter your start date (dd/mm/yyyy): ");
+                 String startdate13 = in.readLine();
+                 while(!isDateValid(startdate13))
+                 {
+                     System.out.print("Please enter a valid date (dd/mm/yyyy): ");
+                     startdate13 = in.readLine();
+                 }
+                 System.out.print("Please enter your end date (dd/mm/yyyy): ");
+                 String enddate13 = in.readLine();
+                 while(!isDateValid(enddate13))
+                 {
+                     System.out.print("Please enter a valid date (dd/mm/yyyy): ");
+                     enddate13= in.readLine();
+                 }
+
+                //String qq = String.format("UPDATE USR SET password = '%s' WHERE userid = '%',password = '%s'",newpw,user,checker);
+
+                    String bb1 = String.format("UPDATE EDUCATIONAL_DETAILS SET instituitionName = '%s', major ='%s', degree = '%s', startdate = '%s', enddate = '%s' WHERE userid = '%s' AND instituitionName = '%s' AND major = '%s' AND degree = '%s'AND startdate = '%s'AND enddate = '%s'",company13,role13,location13,startdate13,enddate13,yoyo12.get(i).get(0),yoyo12.get(i).get(1),yoyo12.get(i).get(2),yoyo12.get(i).get(3),yoyo12.get(i).get(4),yoyo12.get(i).get(5));
+
+                esql.executeUpdate(bb1);
+                }
+                ++i;
+                }
+                //update work exp
+                break;
+                case 9: break;
+                default : System.out.println ("Unrecognized choice!"); break;
+            }
+       break;
+
+
+       //break;
+       default : System.out.println("Unrecognized choice!"); break;
        }
+
         System.out.println(".........................");
        }
 
@@ -559,9 +742,74 @@ System.out.println("Press anything else to return to the main menu\n");
        return -1;
    }
 
-   public static int NewMessage(ProfNetwork esql)
+   public static int NewMessage(ProfNetwork esql, String user)
    {
+       try{
+       System.out.print("Enter name: ");
+       String recipient = in.readLine();
+       String chh = String.format("SELECT * FROM USR WHERE userid='%s'",recipient);
+       int empty = esql.executeQuery(chh);
+       if(empty == 0)
+       {
+           System.out.println("User does not exist");
+           return -1;
+       }
+
+       List<List<String>> coont = esql.executeQueryAndReturnResult("SELECT * FROM MESSAGE");
+
+       String query = String.format("SELECT * FROM MESSAGE WHERE senderid = '%s' AND receiverID = '%s'",user,recipient);
+       int messagenumber = esql.executeQuery(query);
+       System.out.print("Enter message: ");
+       Calendar calendar = Calendar.getInstance();
+       java.sql.Timestamp ourJavaTimeStampObject = new java.sql.Timestamp(calendar.getTime().getTime());
+       String message = in.readLine();
+        String meow = String.format("INSERT INTO MESSAGE(msgId,senderId,receiverId,contents,sendTime,deletestatus,status) VALUES ('%s','%s','%s','%s','%s','%s','%s')",coont.size(),user,recipient,message,ourJavaTimeStampObject,0,"Delivered");
+//if deletestatus is 1, sender deletes it, if 2, receiver deletes, if 3 both delete.
+esql.executeUpdate(meow);
+
+}
+catch(Exception e){
+        //   System.err.println (e.getMessage ());
+       }
+
        return -1;
+   }
+
+   public static int Viewsent(ProfNetwork esql, String user)
+   {
+       try{
+           String query = String.format("SELECT * FROM MESSAGE WHERE senderid= '%s'",user);
+           List<List<String>> sentmessages = esql.executeQueryAndReturnResult(query);
+           for(int i = 0; i < sentmessages.size();++i)
+           {
+
+System.out.println("---------");
+               System.out.println("Message: " + sentmessages.get(i).get(3));
+
+               System.out.println("Recipient: " + sentmessages.get(i).get(2));
+               System.out.println("Time: " + sentmessages.get(i).get(4));
+System.out.println("---------");
+               System.out.print("Delete message?");
+                String z = in.readLine();
+                while(true)
+                {
+                    if((z).equals("y") || (z).equals("n"))
+                        break;
+                    System.out.print("Enter y or n: ");
+                    z = in.readLine();
+                }
+                if((z).equals("y"))
+                {
+                    String deletething = String.format("UPDATE MESSAGE SET senderid = '%s', deletestatus = '%s' WHERE msgId = '%s'", -1, sentmessages.get(i).get(5)+1,sentmessages.get(i).get(0));    esql.executeUpdate(deletething);
+
+
+                }
+           }
+       }
+       catch(Exception e){
+       }
+       return -1;
+
    }
 
    public static int SendRequest(ProfNetwork esql)
@@ -610,6 +858,26 @@ System.out.println(".........................");
        else if(foo == 2)
        {
            //sendmessage
+           //
+           //
+           //
+           //
+           //
+           //IF WITHIN 3 CONNECTIONS OR 5 FOR NEW. idk how to do it
+           //
+           //
+        List<List<String>> coont = esql.executeQueryAndReturnResult("SELECT * FROM MESSAGE");
+
+       String queryy = String.format("SELECT * FROM MESSAGE WHERE senderid = '%s' AND receiverID = '%s'",user,name1);
+       int messagenumber = esql.executeQuery(queryy);
+       System.out.print("Enter message: ");
+       Calendar calendar = Calendar.getInstance();
+       java.sql.Timestamp ourJavaTimeStampObject = new java.sql.Timestamp(calendar.getTime().getTime());
+       String message = in.readLine();
+        String meow = String.format("INSERT INTO MESSAGE(msgId,senderId,receiverId,contents,sendTime,deletestatus,status) VALUES ('%s','%s','%s','%s','%s','%s','%s')",coont.size(),user,name1,message,ourJavaTimeStampObject,0,"Delivered");
+//if deletestatus is 1, sender deletes it, if 2, receiver deletes, if 3 both delete.
+esql.executeUpdate(meow);
+
            System.out.println("Message sent");
            }
         System.out.println(".........................");
