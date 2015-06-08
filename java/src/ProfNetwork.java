@@ -271,7 +271,7 @@ public class ProfNetwork {
                 System.out.println("MAIN MENU");
                 System.out.println("---------");
                 System.out.println("1. Goto Friend List");
-                System.out.println("2. Update Profile");
+                System.out.println("2. View/Update Profile");
                 System.out.println("3. Write a new message");
                 System.out.println("4. Send Friend Request");
                 System.out.println("5. Search for a person");
