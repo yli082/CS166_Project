@@ -614,7 +614,7 @@ System.out.println("EDucational details");
                 System.out.println("2. Add educational details");
                 System.out.println("3. Update educational details");
 System.out.println(".........................");
-//System.out.println("Press anything else to return to the main menu\n");
+System.out.println("Press anything else to return to the main menu\n");
             String query12 = String.format("SELECT * FROM EDUCATIONAL_DETAILS WHERE userid = '%s'",user);
             List<List<String>> yoyo12 = esql.executeQueryAndReturnResult(query12);
             switch(readChoice()){
@@ -769,7 +769,7 @@ esql.executeUpdate(meow);
 
 }
 catch(Exception e){
-        //   System.err.println (e.getMessage ());
+         System.err.println (e.getMessage ());
        }
 
        return -1;
